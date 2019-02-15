@@ -1,5 +1,13 @@
 FROM alpine:3.8
 
-COPY assets/ /opt/resource
+LABEL maintainer="Quoine DevOps Team <devops@quoine.com>"
 
-RUN apk add --no-cache bash jq curl
+COPY assets/ /opt/resource
+RUN cd /opt/resource && \
+    chmod +x \
+        check \
+        in \
+        out
+
+RUN apk add --no-cache bash jq curl \
+    && rm -rf /var/cache/apk/*
