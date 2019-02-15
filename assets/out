@@ -27,6 +27,11 @@ tag="$(jq -r '.params.tag // "latest"' < $payload)"
 harbor_host=$(jq -r '.source.harbor_host // ""' < $payload)
 harbor_scan_thresholds=$(jq -r '.params.harbor_scan_thresholds // ""' < $payload)
 
+# check if tag is a file, then cat that file instead
+if [ -n $tag ] && [ -f "$source/$tag" ]; then
+    tag=$(cat $tag)
+fi
+
 export harbor_image=$(echo $repository | cut -f2- -d '/')
 export harbor_respoitory_encoded=$(urlencode $harbor_image)
 export scan_check_tries=10
