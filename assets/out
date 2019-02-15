@@ -38,14 +38,14 @@ export scan_check_tries=10
 export scan_check_interval=5
 
 harbor_curl_scan() {
-    	response=$(curl -sk --write-out "%{http_code}\n" --output /dev/null -H "Content-Type: application/json" -X POST --user $username:$password "https://$harbor_host/api/repositories/$harbor_respoitory_encoded/tags/$tag/scan" )
-    	if [ $response != "200" ]; then
-    		echo "Failed to initiate Harbor Scan on https://$harbor_host/api/repositories/$harbor_respoitory_encoded/tags/$tag !!!"
-    		exit 1
-    	else
-    		echo "Scan Initiated on https://$harbor_host/api/repositories/$harbor_respoitory_encoded/tags/$tag ..."
-    	fi
-    }
+    response=$(curl -sk --write-out "%{http_code}\n" --output /dev/null -H "Content-Type: application/json" -X POST --user $username:$password "https://$harbor_host/api/repositories/$harbor_respoitory_encoded/tags/$tag/scan" )
+    if [ $response != "200" ]; then
+        echo "Failed to initiate Harbor Scan on https://$harbor_host/api/repositories/$harbor_respoitory_encoded/tags/$tag !!!"
+        exit 1
+    else
+        echo "Scan Initiated on https://$harbor_host/api/repositories/$harbor_respoitory_encoded/tags/$tag ..."
+    fi
+}
 
 harbor_curl_scan_check() {
     response=$(curl -sk -H "Content-Type: application/json" -X GET --user $username:$password "https://$harbor_host/api/repositories/$harbor_respoitory_encoded/tags/$tag" | jq .scan_overview.scan_status | tr -d "\"")
@@ -63,7 +63,8 @@ harbor_curl_scan_details() {
 }
 
 echo "Triggering Image scan..."
-  	harbor_curl_scan
+    harbor_curl_scan
+    # check if the image was already scanned; auto-scanning enabled `scan_overview`
 
 
 # Check if Scan is complete or if it hasnt been triggered.
